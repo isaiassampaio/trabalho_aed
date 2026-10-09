@@ -4,15 +4,15 @@ public class Candidato {
     private int id;
     private String nome;
     private String estado;
-    private Char sexo;
-    private Char sexoInteresse;
+    private char sexo;
+    private char sexoInteresse;
 
     //achei mais interessante criar uma classe ListaIdentificadores para conseguir manipular as listas
     private ListaIdentificadores interesses;
     private ListaIdentificadores companheiros;
 
-    //construtor da classe candidato
-    Public Candidato(int id, String nome, String estado, Char sexo; Char sexoInteresse ){
+    //método para criar o candidato
+    public Candidato(int id, String nome, String estado, char sexo; char sexoInteresse ){
         this.id = id;
         this.nome = nome;
         this.estado = estado;
@@ -22,8 +22,8 @@ public class Candidato {
         companheiros = new ListaIdentificadores();
     }
 
-     public int getIdentificador() {
-        return identificador;
+     public int getId() {
+        return id;
     }
 
     public String getNome() {
@@ -42,7 +42,29 @@ public class Candidato {
         return sexoInteresse;
     }
 
-        
+    //método para atualizar o cadastro do candidato
+    public void atualizaCadastro(String nome, String estado, char sexo, char sexoInteresse) {
+        this.nome = nome;
+        this.estado = estado;
+        this.sexo = sexo;
+        this.sexoInteresse = sexoInteresse;
+    }
+
+    //verifica potenciais companheiros
+    public boolean verificaPotencialCompanheiro(Candidato u, Candidato v) {
+
+        boolean uAceitav;
+        boolean vAceitau;
+
+        //verifica se o sexo de interesse do candidato u é = ao sexo do candidato v ou se o sexo de interesse de u = I
+        if (u.getSexoInteresse == v.getSexo || u.getSexoInteresse == "I" ){
+            if (v.getSexoInteresse == u.getSexo){
+
+            }
+        }
+    }
+
+
 
 
 
