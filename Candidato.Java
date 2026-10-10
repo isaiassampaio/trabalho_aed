@@ -12,7 +12,7 @@ public class Candidato {
     private ListaIdentificadores companheiros;
 
     //método para criar o candidato
-    public Candidato(int id, String nome, String estado, char sexo; char sexoInteresse ){
+    public Candidato(int id, String nome, String estado, char sexo, char sexoInteresse ){
         this.id = id;
         this.nome = nome;
         this.estado = estado;
@@ -53,16 +53,27 @@ public class Candidato {
     //verifica potenciais companheiros
     public boolean verificaPotencialCompanheiro(Candidato u, Candidato v) {
 
-        boolean uAceitav;
-        boolean vAceitau;
+        //verifica se residem no mesmo estado
+        if (u.getEstado().equals(v.getEstado())){
+            System.out.println("São do mesmo estado");
+            return true;
+        }else{
+            System.out.println("Não são do mesmo estado");
+            return false;
+        }
 
-        //verifica se o sexo de interesse do candidato u é = ao sexo do candidato v ou se o sexo de interesse de u = I
-        if (u.getSexoInteresse == v.getSexo || u.getSexoInteresse == "I" ){
-            if (v.getSexoInteresse == u.getSexo){
 
-            }
+
+
+        //verifica se o sexo de interesse do candidato u é = ao sexo do candidato v, ou se o sexo de interesse de u = I. Também verifica a mesma coisa para o candidato v
+        if (u.getSexoInteresse() == v.getSexo()
+            || u.getSexoInteresse() == 'I') {
+        if (v.getSexoInteresse() == u.getSexo()
+                || v.getSexoInteresse() == 'I') {
+            return true;
         }
     }
+    return false;
 
 
 
