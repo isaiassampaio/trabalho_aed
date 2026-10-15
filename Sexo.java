@@ -1,5 +1,5 @@
 public enum Sexo {
-    Masculino,
-    Feminino,
-    Indiferente,
+   MASCULINO,
+   FEMININO,
+   INDIFERENTE,
 }
