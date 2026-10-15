@@ -69,4 +69,34 @@ public class Candidato {
     public void adicionaInteresse(Interesse inter) {
         this.interesses.add(this.interesses.getSize(), inter);
     }
+
+    public int calculaInteresseEmComun(Candidato outro){
+        int pontuacao = 0;
+
+        for (int i = 0; i < interesses.getSize(); i++){
+            Interesse interesseAtual = interesses.get(1);
+
+
+            for(int j = 0; j < outro.interesses.getSize(); j++){
+                if( interesseAtual == outro.interesses.get(j)){
+                    switch(interesseAtual){
+                        case ESPORTES:
+                        case MUSICA:
+                        case CINEMA:
+                            pontuacao += 1;
+                        case ARTES:
+                        case ANIMAIS:
+                        case GASTRONOMIA:
+                            pontuacao += 2;
+                        case TECNOLOGIA:
+                        case CIENCIAS:
+                            pontuacao += 3;
+                            break;
+                    }
+                    break;
+                }
+            }
+        }
+        return pontuacao;
+    }
 }
