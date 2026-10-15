@@ -74,7 +74,7 @@ public class Candidato {
         int pontuacao = 0;
 
         for (int i = 0; i < interesses.getSize(); i++){
-            Interesse interesseAtual = interesses.get(1);
+            Interesse interesseAtual = interesses.get(i);
 
 
             for(int j = 0; j < outro.interesses.getSize(); j++){
