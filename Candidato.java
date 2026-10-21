@@ -21,7 +21,7 @@ public class Candidato {
         this.companheiros = new ListaIdentificadores<>();
     }
 
-     public int getId() {
+    public int getId() {
         return id;
     }
 
@@ -41,7 +41,7 @@ public class Candidato {
         return sexoInteresse;
     }
 
-    //método para atualizar o cadastro do candidato
+    // método para atualizar o cadastro do candidato
     public void atualizaCadastro(String nome, Estado estado, Sexo sexo, Sexo sexoInteresse) {
         this.nome = nome;
         this.estado = estado;
@@ -81,19 +81,44 @@ public class Candidato {
         boolean mesmoEstado = u.getEstado().equals(v.getEstado());
 
         boolean interesseDeU = u.getSexoInteresse() == v.getSexo()
-                || u.getSexoInteresse() == Sexo.Indiferente;
+                || u.getSexoInteresse() == Sexo.getSexo("I");
         boolean interesseDeV = v.getSexoInteresse() == u.getSexo()
-                || v.getSexoInteresse() == Sexo.Indiferente;
+                || v.getSexoInteresse() == Sexo.getSexo("I");
 
         return mesmoEstado && interesseDeU && interesseDeV;
-        }
+    }
 
     public void adicionaInteresse(Interesse inter) {
         this.interesses.add(this.interesses.getSize(), inter);
     }
 
-    @Override
-    public String toString() {
-        return "Nome: " +this.getNome();
+    public int calculaInteresseEmComun(Candidato outro){
+        int pontuacao = 0;
+
+        for (int i = 0; i < interesses.getSize(); i++){
+            Interesse interesseAtual = interesses.get(i);
+
+
+            for(int j = 0; j < outro.interesses.getSize(); j++){
+                if( interesseAtual == outro.interesses.get(j)){
+                    switch(interesseAtual){
+                        case ESPORTES:
+                        case MUSICA:
+                        case CINEMA:
+                            pontuacao += 1;
+                        case ARTES:
+                        case ANIMAIS:
+                        case GASTRONOMIA:
+                            pontuacao += 2;
+                        case TECNOLOGIA:
+                        case CIENCIAS:
+                            pontuacao += 3;
+                            break;
+                    }
+                    break;
+                }
+            }
+        }
+        return pontuacao;
     }
 }
