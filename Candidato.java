@@ -1,19 +1,18 @@
 public class Candidato {
 
     //criando os atributos da classe candidato
-    private int id;
+    private static int proximoId = 1;
+    private final int id;
     private String nome;
     private Estado estado;
     private Sexo sexo;
     private Sexo sexoInteresse;
-
-    //achei mais interessante criar uma classe ListaIdentificadores para conseguir manipular as listas
     private ListaIdentificadores<Interesse> interesses;
     private ListaIdentificadores<Integer> companheiros;
 
     //método para criar o candidato
-    public Candidato(int id, String nome, Estado estado, Sexo sexo, Sexo sexoInteresse ){
-        this.id = id;
+    public Candidato(String nome, Estado estado, Sexo sexo, Sexo sexoInteresse ){
+        this.id = proximoId++;
         this.nome = nome;
         this.estado = estado;
         this.sexo = sexo;
@@ -50,16 +49,37 @@ public class Candidato {
         this.sexoInteresse = sexoInteresse;
     }
 
+    public void inserePotencialCompanheiro(Candidato u, Candidato v) {
+        if(verificaPotencialCompanheiro(u, v)) {
+            u.companheiros.add(companheiros.getSize(), v.getId());
+        }
+    }
+
+    public long numeroCompanheiros(Candidato u) {
+        return this.companheiros.getSize();
+    }
+
+    public String listaCompanheiros(Candidato u) {
+        return u.companheiros.toString();
+    }
+
+    public boolean temInteresse(Candidato u, int id) {
+        // precisa implementar lógica de SEARCH
+        return false;
+    }
+
+    public boolean reside(Candidato u, String sigla) {
+        if(sigla.equals(u.getEstado().getSigla()))
+            return true;
+        return false;
+    }
+
     //verifica potenciais companheiros
     public boolean verificaPotencialCompanheiro(Candidato u, Candidato v) {
 
         // Verifica se residem no mesmo estado.
         boolean mesmoEstado = u.getEstado().equals(v.getEstado());
 
-
-
-
-        // Verifica se há interesse mútuo ('I' significa indiferente).
         boolean interesseDeU = u.getSexoInteresse() == v.getSexo()
                 || u.getSexoInteresse() == Sexo.Indiferente;
         boolean interesseDeV = v.getSexoInteresse() == u.getSexo()
@@ -70,5 +90,10 @@ public class Candidato {
 
     public void adicionaInteresse(Interesse inter) {
         this.interesses.add(this.interesses.getSize(), inter);
+    }
+
+    @Override
+    public String toString() {
+        return "Nome: " +this.getNome();
     }
 }
