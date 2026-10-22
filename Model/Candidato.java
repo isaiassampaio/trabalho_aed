@@ -47,6 +47,14 @@ public class Candidato {
         return sexoInteresse;
     }
 
+    public ListaIdentificadores<Integer> listaCompanheiros() {
+        ListaIdentificadores<Integer> copia = new ListaIdentificadores<>();
+        for (int i = 0; i < companheiros.getSize(); i++) {
+            copia.add(copia.getSize(), companheiros.get(i));
+        }
+        return copia;
+    }
+
     // método para atualizar o cadastro do candidato
     public void atualizaCadastro(String nome, Estado estado, Sexo sexo, Sexo sexoInteresse) {
         this.nome = nome;
@@ -55,10 +63,18 @@ public class Candidato {
         this.sexoInteresse = sexoInteresse;
     }
 
-    public void inserePotencialCompanheiro(Candidato u, Candidato v) {
-        if (verificaPotencialCompanheiro(u, v)) {
-            u.companheiros.add(u.companheiros.getSize(), v.getId());
+    public void inserePotencialCompanheiro(Candidato u, Candidato v, int grau) {
+        if (!verificaPotencialCompanheiro(u, v, grau)) {
+            return;
         }
+
+        for (int i = 0; i < u.companheiros.getSize(); i++) {
+            if (u.companheiros.get(i) == v.getId()) {
+                return;
+            }
+        }
+
+        u.companheiros.add(u.companheiros.getSize(), v.getId());
     }
 
     public long numeroCompanheiros(Candidato u) {
@@ -69,10 +85,13 @@ public class Candidato {
         companheiros = new ListaIdentificadores<>();
     }
 
-    public String listaCompanheiros(Candidato u) {
-        return u.companheiros.toString();
+    public void removerCompanheiro(int id) {
+        for (int i = 0; i < companheiros.getSize();) {
+            if (companheiros.get(i) == id) companheiros.remove(i);
+            else i++;
+        }
     }
-
+    
     public boolean temInteresse(Candidato u, int id) {
         for (int i = 0; i < u.interesses.getSize(); i++) {
             Interesse interesseAtual = u.interesses.get(i);
@@ -90,11 +109,13 @@ public class Candidato {
             return false;
         }
 
-        return sigla.equalsIgnoreCase(u.getEstado().getSigla());
+                return sigla.equalsIgnoreCase(u.getEstado().getSigla());
     }
 
     // verifica potenciais companheiros
-    public boolean verificaPotencialCompanheiro(Candidato u, Candidato v) {
+    public boolean verificaPotencialCompanheiro(Candidato u, Candidato v, int grau) {
+
+        if (u == null || v == null || u.getId() == v.getId()) return false;
 
         // Verifica se residem no mesmo estado.
         boolean mesmoEstado = reside(u, v.getEstado().getSigla());
@@ -103,12 +124,23 @@ public class Candidato {
                 || u.getSexoInteresse() == Sexo.getSexo("I");
         boolean interesseDeV = v.getSexoInteresse() == u.getSexo()
                 || v.getSexoInteresse() == Sexo.getSexo("I");
+        boolean grauMinimo = u.calculaInteresseEmComun(v) >= grau;
 
-        return mesmoEstado && interesseDeU && interesseDeV;
+        return mesmoEstado && interesseDeU && interesseDeV && grauMinimo;
+    }
+
+    public void limparInteresses() {
+        interesses = new ListaIdentificadores<>();
     }
 
     public void adicionaInteresse(Interesse inter) {
-        this.interesses.add(this.interesses.getSize(), inter);
+        for(int i=0;i<interesses.getSize();i++) {
+            if(interesses.get(i) == inter) {
+                return;
+            }
+        }
+
+        interesses.add(interesses.getSize(), inter);
     }
 
     public int calculaInteresseEmComun(Candidato outro) {

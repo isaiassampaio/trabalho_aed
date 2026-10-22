@@ -11,26 +11,23 @@ public class App {
     private final CandidatoView view;
     private final ListaIdentificadores<Candidato> candidatos = new ListaIdentificadores<>();
     private int quantidade;
-    private static int GRAU_MINIMO_INTERESSE;
+    private static int GRAU_MINIMO_INTERESSE = 2;
 
     public App(Scanner entrada) {
         this.entrada = entrada;
         this.view = new CandidatoView(entrada);
         this.quantidade = Dados.carregar(candidatos);
+        calcularTodosCompanheiros();
     }
 
     public void iniciar() {
-        Candidato candidato = cadastrar();
-        atualizarCompanheiros(candidato);
         int opcao;
         do {
             view.exibirMenu();
-            opcao = entrada.nextInt();
-            entrada.nextLine();
+            opcao = view.lerInteiro("Escolha uma opção: ");
             switch (opcao) {
                 case 1:
-                    view.atualizaCadastro(candidato);
-                    atualizarCompanheiros(candidato);
+                    cadastrar();
                     break;
                 case 2:
                     view.listar(candidatos, quantidade);
@@ -48,10 +45,14 @@ public class App {
                     candidatosPorEstado();
                     break;
                 case 7:
-                    if (candidato != null) {
-                        view.atualizaCadastro(candidato);
-                        atualizarCompanheiros(candidato);
-                    }
+                    atualizarCadastroPorId();
+                    break;
+                case 8:
+                    GRAU_MINIMO_INTERESSE = view.grauMinimoInteresse();
+                    calcularTodosCompanheiros();
+                    break;
+                case 9: 
+                    potenciaisCompanheiros();
                     break;
                 case 0:
                     view.mensagem("Encerrando.");
@@ -76,33 +77,58 @@ public class App {
         candidatos.add(candidatos.getSize(), candidato);
         quantidade++;
         view.mensagem("Candidato cadastrado.");
+        atualizarCompanheiros(candidato);
         return candidato;
     }
 
     private void atualizarCompanheiros(Candidato candidato) {
         for(int i=0;i<candidatos.getSize();i++) {
             if(candidatos.get(i).getId() != candidato.getId()) {
-                candidatos.get(i).listaCompanheiros(candidato);
+                candidatos.get(i).removerCompanheiro(candidato.getId());
             }
         }
         candidato.limparCompanheiros();
 
         for (int i = 0; i < candidatos.getSize(); i++) {
             if (candidato.getId() != candidatos.get(i).getId()) {
-                if (candidato.verificaPotencialCompanheiro(candidato, candidatos.get(i))
-                        && candidato.calculaInteresseEmComun(candidatos.get(i)) >= GRAU_MINIMO_INTERESSE) {
-                    candidato.inserePotencialCompanheiro(candidato, candidatos.get(i));
-                    candidatos.get(i).inserePotencialCompanheiro(candidatos.get(i), candidato);
+                if (candidato.verificaPotencialCompanheiro(candidato, candidatos.get(i), GRAU_MINIMO_INTERESSE)) {
+                    candidato.inserePotencialCompanheiro(candidato, candidatos.get(i), GRAU_MINIMO_INTERESSE);
+                    candidatos.get(i).inserePotencialCompanheiro(candidatos.get(i), candidato, GRAU_MINIMO_INTERESSE);
                 }
             }
         }
     }
 
+    private void calcularTodosCompanheiros() {
+        for (int i = 0; i < candidatos.getSize(); i++) candidatos.get(i).limparCompanheiros();
+        for (int i = 0; i < candidatos.getSize(); i++) {
+            Candidato primeiro = candidatos.get(i);
+            for (int j = i + 1; j < candidatos.getSize(); j++) {
+                Candidato outro = candidatos.get(j);
+                if (primeiro.verificaPotencialCompanheiro(primeiro, outro, GRAU_MINIMO_INTERESSE)) {
+                    primeiro.inserePotencialCompanheiro(primeiro, outro, GRAU_MINIMO_INTERESSE);
+                    outro.inserePotencialCompanheiro(outro, primeiro, GRAU_MINIMO_INTERESSE);
+                }
+            }
+        }
+    }
+
+    private void atualizarCadastroPorId() {
+        int id = view.lerInteiro("ID do candidato: ");
+        int posicao = buscaPosicaoPorId(id);
+        if (posicao < 0) {
+            view.mensagem("Candidato não encontrado.");
+            return;
+        }
+        Candidato candidato = candidatos.get(posicao);
+        view.atualizaCadastro(candidato);
+        atualizarCompanheiros(candidato);
+    }
+
     private void listarMaisCompanheiros() {
-        System.out.print("k: ");
-        int k = entrada.nextInt();
-        entrada.nextLine();
-        while (k < 1 || k > quantidade) {
+        int k = view.lerInteiro("k: ");
+        if (k < 1 || k > quantidade) {
+            view.mensagem("K deve estar entre 1 e " + quantidade + ".");
             return;
         }
 
@@ -127,13 +153,17 @@ public class App {
                 listaSemCompanheiros.add(listaSemCompanheiros.getSize(), atual);
             }
         }
+
+        if(listaSemCompanheiros.getSize() == 0) {
+            view.mensagem("Nenhum candidato sem companheiros foi encontrado.");
+            return;
+        }
+
         view.listar(listaSemCompanheiros, Integer.valueOf(String.valueOf(listaSemCompanheiros.getSize())));
     }
 
     private void candidatosPorInteresse() {
-        System.out.print("Digite o código da área de interesse (1 a 8): ");
-        int idInteresse = entrada.nextInt();
-        entrada.nextLine();
+        int idInteresse = view.lerInteiro("Digite o código da área de interesse (1 a 8): ");
 
         if (idInteresse < 1 || idInteresse > 8) {
             view.mensagem("Área de interesse inválida.");
@@ -155,8 +185,7 @@ public class App {
 
     //consulta os candidatos por estado
     private void candidatosPorEstado() {
-        System.out.print("Digite a sigla do estado: ");
-        String sigla = entrada.nextLine().trim().toUpperCase();
+        String sigla = view.lerEstado().getSigla();
 
         ListaIdentificadores<Candidato> lista = new ListaIdentificadores<>();
 
@@ -171,12 +200,41 @@ public class App {
         view.listarIdNome(lista);
     }
 
+    private void potenciaisCompanheiros() {
+        int id = view.lerId();
+        Candidato atual = buscaCandidatoPorId(id);
+        if(atual == null) {
+            view.mensagem("Candidato não encontrado.");
+            return;
+        } 
+        ListaIdentificadores<Candidato> lista = new ListaIdentificadores<>();
+
+        ListaIdentificadores<Integer> companheiros = atual.listaCompanheiros();
+        for(int i=0;i<companheiros.getSize();i++) {
+            Candidato candidato = buscaCandidatoPorId(companheiros.get(i));
+            if(candidato != null) {
+                lista.add(lista.getSize(), candidato);
+            } 
+        }
+
+        view.listarIdNome(lista);
+    }
+
     private int buscaPosicaoPorId(int id) {
-        for(int posicao=0;posicao>candidatos.getSize(); posicao++) {
+        for(int posicao=0;posicao<candidatos.getSize(); posicao++) {
             if(candidatos.get(posicao).getId() == id) {
                 return posicao;
             }
         }
         return -1;
+    }
+
+    private Candidato buscaCandidatoPorId(int id) {
+        for(int i=0;i<candidatos.getSize();i++) {
+            if(candidatos.get(i).getId() == id) {
+                return candidatos.get(i);
+            }
+        }
+        return null;
     }
 }
