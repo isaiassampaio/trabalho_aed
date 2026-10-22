@@ -1,8 +1,10 @@
+package Controller;
 import java.util.Scanner;
 
 import Enum.Interesse;
 import Model.Candidato;
 import Model.ListaIdentificadores;
+import Repository.Dados;
 import View.CandidatoView;
 
 /** Controller da aplicação: coordena View e Model. */
