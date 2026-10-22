@@ -9,16 +9,25 @@ import Model.ListaIdentificadores;
 
 public class CandidatoView {
     private final Scanner scan;
-    public CandidatoView(Scanner scan) { this.scan = scan; }
 
+    public CandidatoView(Scanner scan) {
+        this.scan = scan;
+    }
 
     public Candidato lerCandidato() {
         System.out.print("Nome: ");
         String nome = scan.nextLine();
 
         System.out.print("Estado (sigla): ");
-        String siglaEstado = scan.nextLine().toUpperCase();
-        Estado estado = Estado.getEstado(siglaEstado);
+        Estado estado = null;
+        while (estado == null) {
+            String siglaEstado = scan.nextLine().trim().toUpperCase();
+            estado = Estado.getEstado(siglaEstado);
+
+            if (estado == null) {
+                System.out.println("Estado inválido! Digite uma sigla válida:");
+            }
+        }
 
         System.out.print("Sexo (F/M): ");
         String siglaSexo = scan.nextLine().toUpperCase();
@@ -27,7 +36,6 @@ public class CandidatoView {
         System.out.print("F - Feminino\nM - Masculino\nI - Indiferente\n\n Interesse: ");
         String siglaInteresse = scan.nextLine().toUpperCase();
         Sexo sexoInteresse = Sexo.getSexo(siglaInteresse);
-
 
         return new Candidato(nome, estado, sexo, sexoInteresse);
     }
@@ -48,6 +56,7 @@ public class CandidatoView {
             }
         }
     }
+
     public void exibirMenu() {
         System.out.println("\n=== SISTEMA DE RELACIONAMENTOS ===");
         System.out.println("1 - Atualizar Cadastro\n2 - Listar candidatos");
@@ -59,13 +68,22 @@ public class CandidatoView {
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
-    public void listar(ListaIdentificadores<Candidato> candidatos, int quantidade) {
-        if (quantidade == 0) { mensagem("Nenhum candidato cadastrado."); return; }
-        for (int i = 0; i < quantidade; i++) { Candidato c = candidatos.get(i);
-            System.out.printf("ID: %d | Nome: %s | Estado: %s | Sexo: %s | Interesse: %s%n", c.getId(), c.getNome(), c.getEstado(), c.getSexo(), c.getSexoInteresse()); }
-    }
-    public void mensagem(String texto) { System.out.println(texto); }
 
+    public void listar(ListaIdentificadores<Candidato> candidatos, int quantidade) {
+        if (quantidade == 0) {
+            mensagem("Nenhum candidato cadastrado.");
+            return;
+        }
+        for (int i = 0; i < quantidade; i++) {
+            Candidato c = candidatos.get(i);
+            System.out.printf("ID: %d | Nome: %s | Estado: %s | Sexo: %s | Interesse: %s%n", c.getId(), c.getNome(),
+                    c.getEstado(), c.getSexo(), c.getSexoInteresse());
+        }
+    }
+
+    public void mensagem(String texto) {
+        System.out.println(texto);
+    }
 
     public void atualizaCadastro(Candidato candidato) {
         System.out.print("Nome: ");
@@ -84,5 +102,17 @@ public class CandidatoView {
         Sexo sexoInteresse = Sexo.getSexo(siglaInteresse);
 
         candidato.atualizaCadastro(nome, estado, sexo, sexoInteresse);
+    }
+
+    public void listarIdNome(ListaIdentificadores<Candidato> lista) {
+        System.out.println("\n ---- Candidatos Encontrados ----");
+
+        for (int i = 0; i < lista.getSize(); i++) {
+            Candidato candidato = lista.get(i);
+
+            System.out.println("ID: " + candidato.getId() + "| Nome: " + candidato.getNome());
+        }
+
+        System.out.println("\nTotal de candidatos encontrados " + lista.getSize());
     }
 }

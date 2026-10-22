@@ -3,9 +3,10 @@ package Model;
 import Enum.Interesse;
 import Enum.Estado;
 import Enum.Sexo;
+
 public class Candidato {
 
-    //criando os atributos da classe candidato
+    // criando os atributos da classe candidato
     private static int proximoId = 1;
     private final int id;
     private String nome;
@@ -15,8 +16,8 @@ public class Candidato {
     private ListaIdentificadores<Interesse> interesses;
     private ListaIdentificadores<Integer> companheiros;
 
-    //método para criar o candidato
-    public Candidato(String nome, Estado estado, Sexo sexo, Sexo sexoInteresse ){
+    // método para criar o candidato
+    public Candidato(String nome, Estado estado, Sexo sexo, Sexo sexoInteresse) {
         this.id = proximoId++;
         this.nome = nome;
         this.estado = estado;
@@ -55,7 +56,7 @@ public class Candidato {
     }
 
     public void inserePotencialCompanheiro(Candidato u, Candidato v) {
-        if(verificaPotencialCompanheiro(u, v)) {
+        if (verificaPotencialCompanheiro(u, v)) {
             u.companheiros.add(u.companheiros.getSize(), v.getId());
         }
     }
@@ -73,17 +74,26 @@ public class Candidato {
     }
 
     public boolean temInteresse(Candidato u, int id) {
-        // precisa implementar lógica de SEARCH
+        for (int i = 0; i < u.interesses.getSize(); i++) {
+            Interesse interesseAtual = u.interesses.get(i);
+
+            if (interesseAtual.ordinal() + 1 == id) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     public boolean reside(Candidato u, String sigla) {
-        if(sigla.equals(u.getEstado().getSigla()))
-            return true;
-        return false;
+        if (u == null || u.getEstado() == null || sigla == null) {
+            return false;
+        }
+
+        return sigla.equalsIgnoreCase(u.getEstado().getSigla());
     }
 
-    //verifica potenciais companheiros
+    // verifica potenciais companheiros
     public boolean verificaPotencialCompanheiro(Candidato u, Candidato v) {
 
         // Verifica se residem no mesmo estado.
@@ -101,16 +111,15 @@ public class Candidato {
         this.interesses.add(this.interesses.getSize(), inter);
     }
 
-    public int calculaInteresseEmComun(Candidato outro){
+    public int calculaInteresseEmComun(Candidato outro) {
         int pontuacao = 0;
 
-        for (int i = 0; i < interesses.getSize(); i++){
+        for (int i = 0; i < interesses.getSize(); i++) {
             Interesse interesseAtual = interesses.get(i);
 
-
-            for(int j = 0; j < outro.interesses.getSize(); j++){
-                if( interesseAtual == outro.interesses.get(j)){
-                    switch(interesseAtual){
+            for (int j = 0; j < outro.interesses.getSize(); j++) {
+                if (interesseAtual == outro.interesses.get(j)) {
+                    switch (interesseAtual) {
                         case ESPORTES:
                         case MUSICA:
                         case CINEMA:
