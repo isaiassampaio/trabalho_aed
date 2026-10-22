@@ -1,3 +1,8 @@
+package Model;
+
+import Enum.Interesse;
+import Enum.Estado;
+import Enum.Sexo;
 public class Candidato {
 
     //criando os atributos da classe candidato
@@ -51,12 +56,16 @@ public class Candidato {
 
     public void inserePotencialCompanheiro(Candidato u, Candidato v) {
         if(verificaPotencialCompanheiro(u, v)) {
-            u.companheiros.add(companheiros.getSize(), v.getId());
+            u.companheiros.add(u.companheiros.getSize(), v.getId());
         }
     }
 
     public long numeroCompanheiros(Candidato u) {
-        return this.companheiros.getSize();
+        return u.companheiros.getSize();
+    }
+
+    public void limparCompanheiros() {
+        companheiros = new ListaIdentificadores<>();
     }
 
     public String listaCompanheiros(Candidato u) {
@@ -78,7 +87,7 @@ public class Candidato {
     public boolean verificaPotencialCompanheiro(Candidato u, Candidato v) {
 
         // Verifica se residem no mesmo estado.
-        boolean mesmoEstado = u.getEstado().equals(v.getEstado());
+        boolean mesmoEstado = reside(u, v.getEstado().getSigla());
 
         boolean interesseDeU = u.getSexoInteresse() == v.getSexo()
                 || u.getSexoInteresse() == Sexo.getSexo("I");
@@ -106,10 +115,12 @@ public class Candidato {
                         case MUSICA:
                         case CINEMA:
                             pontuacao += 1;
+                            break;
                         case ARTES:
                         case ANIMAIS:
                         case GASTRONOMIA:
                             pontuacao += 2;
+                            break;
                         case TECNOLOGIA:
                         case CIENCIAS:
                             pontuacao += 3;

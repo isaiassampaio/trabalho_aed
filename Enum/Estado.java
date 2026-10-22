@@ -1,3 +1,4 @@
+package Enum;
 public enum Estado {
     ACRE("AC"), ALAGOAS("AL"), AMAPA("AP"), AMAZONAS("AM"),
     BAHIA("BA"), CEARA("CE"), DISTRITO_FEDERAL("DF"),

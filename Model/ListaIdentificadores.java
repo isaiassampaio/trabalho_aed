@@ -1,3 +1,4 @@
+package Model;
 public class ListaIdentificadores<T> {
     private Celula<T> head;
     private Celula<T> tail;
@@ -25,7 +26,7 @@ public class ListaIdentificadores<T> {
 
             return atual.item;
         } else {
-            throw new IndexOutOfBoundsException(posicao);
+            throw new IndexOutOfBoundsException(String.valueOf(posicao));
         }
     }
 
@@ -46,7 +47,7 @@ public class ListaIdentificadores<T> {
                     tail = tail.prox;
                 size++;
             } else {
-                throw new IndexOutOfBoundsException(posicao);
+                throw new IndexOutOfBoundsException(String.valueOf(posicao));
             }
         }
     }
@@ -67,7 +68,7 @@ public class ListaIdentificadores<T> {
             size--;
             return atual.item;
         } else {
-            throw new IndexOutOfBoundsException(posicao);
+            throw new IndexOutOfBoundsException(String.valueOf(posicao));
         }
     }
 }

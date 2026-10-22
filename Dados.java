@@ -1,7 +1,13 @@
+import Enum.Estado;
+import Enum.Interesse;
+import Enum.Sexo;
+import Model.Candidato;
+import Model.ListaIdentificadores;
+
 public class Dados {
 
     // Cadastra 10 candidatos para cada um dos 27 estados brasileiros.
-    public static int carregar(Candidato[] candidatos) {
+    public static int carregar(ListaIdentificadores<Candidato> candidatos) {
         Estado[] estados = {
             Estado.ACRE, Estado.ALAGOAS, Estado.AMAPA, Estado.AMAZONAS,
             Estado.BAHIA, Estado.CEARA, Estado.DISTRITO_FEDERAL,
@@ -60,8 +66,8 @@ public class Dados {
                 if (indice % 3 == 0) {
                     candidato.adicionaInteresse(interesses[(inicio + 2) % interesses.length]);
                 }
-
-                candidatos[quantidade++] = candidato;
+            candidatos.add(candidatos.getSize(), candidato);
+            quantidade++;
             }
         }
 
