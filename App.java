@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+import Enum.Interesse;
 import Model.Candidato;
 import Model.ListaIdentificadores;
 import View.CandidatoView;
@@ -10,7 +11,7 @@ public class App {
     private final CandidatoView view;
     private final ListaIdentificadores<Candidato> candidatos = new ListaIdentificadores<>();
     private int quantidade;
-    private static final int GRAU_MINIMO_INTERESSE = 4;
+    private static int GRAU_MINIMO_INTERESSE;
 
     public App(Scanner entrada) {
         this.entrada = entrada;
@@ -68,7 +69,10 @@ public class App {
             view.mensagem("Dados inválidos. Cadastro cancelado.");
             return null;
         }
-        view.lerInteresses(candidato);
+        ListaIdentificadores<Interesse> interesses = view.lerInteresses();
+        for(int i=0;i<interesses.getSize();i++) {
+            candidato.adicionaInteresse(interesses.get(i));
+        }
         candidatos.add(candidatos.getSize(), candidato);
         quantidade++;
         view.mensagem("Candidato cadastrado.");
@@ -76,6 +80,11 @@ public class App {
     }
 
     private void atualizarCompanheiros(Candidato candidato) {
+        for(int i=0;i<candidatos.getSize();i++) {
+            if(candidatos.get(i).getId() != candidato.getId()) {
+                candidatos.get(i).listaCompanheiros(candidato);
+            }
+        }
         candidato.limparCompanheiros();
 
         for (int i = 0; i < candidatos.getSize(); i++) {
@@ -160,5 +169,14 @@ public class App {
         }
 
         view.listarIdNome(lista);
+    }
+
+    private int buscaPosicaoPorId(int id) {
+        for(int posicao=0;posicao>candidatos.getSize(); posicao++) {
+            if(candidatos.get(posicao).getId() == id) {
+                return posicao;
+            }
+        }
+        return -1;
     }
 }

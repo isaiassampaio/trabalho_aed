@@ -20,7 +20,7 @@ public class Dados {
             Estado.TOCANTINS
         };
 
-        String[] gentílicos = {
+        String[] gentilicos = {
             "Acreano", "Alagoano", "Amapaense", "Amazonense", "Baiano",
             "Cearense", "Brasiliense", "Capixaba", "Goiano", "Maranhense",
             "Mato-Grossense", "Sul-Mato-Grossense", "Mineiro", "Paraense",
@@ -55,7 +55,7 @@ public class Dados {
         for (int estado = 0; estado < estados.length; estado++) {
             for (int indice = 0; indice < sexos.length; indice++) {
                 int nomeIndex = (estado * 10 + indice) % primeirosNomes.length;
-                String nome = primeirosNomes[nomeIndex] + " " + gentílicos[estado];
+                String nome = primeirosNomes[nomeIndex] + " " + gentilicos[estado];
                 Candidato candidato = new Candidato(nome, estados[estado],
                         sexos[indice], interessesSexo[indice]);
 
@@ -70,7 +70,6 @@ public class Dados {
             quantidade++;
             }
         }
-
         return quantidade;
     }
 }

@@ -40,23 +40,21 @@ public class CandidatoView {
         return new Candidato(nome, estado, sexo, sexoInteresse);
     }
 
-    public void lerInteresses(Candidato candidato) {
+    public ListaIdentificadores<Interesse> lerInteresses() {
+        ListaIdentificadores<Interesse> listaInteresses = new ListaIdentificadores<>();
         System.out.print("1 - Esportes\n2 - Artes\n3 - Música\n4 - Cinema\n"
                 + "5 - Tecnologia\n6 - Animais\n7 - Gastronomia\n8 - Ciências\n\n"
                 + "Separe por ',' os interesses: ");
         String texto = scan.nextLine();
+
         for (String item : texto.split(",")) {
-            try {
                 int opcao = Integer.parseInt(item.trim());
                 if (opcao >= 1 && opcao <= Interesse.values().length) {
-                    candidato.adicionaInteresse(Interesse.values()[opcao - 1]);
+                    listaInteresses.add(listaInteresses.getSize(), Interesse.values()[opcao-1]);
                 }
-            } catch (NumberFormatException ignorado) {
-
             }
+            return listaInteresses;
         }
-    }
-
     public void exibirMenu() {
         System.out.println("\n=== SISTEMA DE RELACIONAMENTOS ===");
         System.out.println("1 - Atualizar Cadastro\n2 - Listar candidatos");
